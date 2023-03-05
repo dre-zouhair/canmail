@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -20,6 +21,7 @@ func NewTemplateRepository(connection *mongo.Database) *TemplateRepository {
 		&Repository[Template]{
 			"targets",
 			connection,
+			context.Background(),
 		},
 	}
 }

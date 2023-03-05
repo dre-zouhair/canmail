@@ -1,6 +1,9 @@
 package model
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type Target struct {
 	Email string            `json:"email"`
@@ -17,6 +20,7 @@ func NewTargetRepository(connection *mongo.Database) *TargetRepository {
 		&Repository[Target]{
 			"targets",
 			connection,
+			context.Background(),
 		},
 	}
 }
