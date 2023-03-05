@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/dre-zouhair/mailer/internal/service"
+	service2 "github.com/dre-zouhair/mailer/service"
 	"net/http"
 )
 
@@ -26,13 +26,13 @@ func Bulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template, targets := service.RetrieveRedisBulkData(body.TemplateName)
+	template, targets := service2.RetrieveRedisBulkData(body.TemplateName)
 	if template == nil || targets == nil {
 		fmt.Println(errors.New("Unable to retrieve " + body.TemplateName + " data"))
 		http.Error(w, "Unable to bulk mail for "+body.TemplateName, http.StatusInternalServerError)
 		return
 	}
-	errs := service.BulkMails(template, targets)
+	errs := service2.BulkMails(template, targets)
 
 	if len(errs) != 0 {
 		w.Header().Set("Content-Type", "application/json")

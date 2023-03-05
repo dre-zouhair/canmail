@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/dre-zouhair/mailer/internal/service"
+	"github.com/dre-zouhair/mailer/service"
 	"net/smtp"
 	"testing"
 )

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/dre-zouhair/mailer/internal/handler"
+	"github.com/dre-zouhair/mailer/handler"
 	"net"
 	"net/http"
 	"time"
