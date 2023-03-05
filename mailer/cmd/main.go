@@ -2,27 +2,27 @@ package main
 
 import (
 	"fmt"
-	"github.com/dre-zouhair/mailer/internal/db"
+	"github.com/dre-zouhair/mailer/internal/handler"
+	"net/http"
 )
 
 func main() {
-	var connection, err = db.Connect()
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "GET" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, err := w.Write([]byte("mailer is UP"))
+		if err != nil {
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+	})
+	http.HandleFunc("/bulk", handler.Bulk)
+	err := http.ListenAndServe(":8080", nil)
 	if err != nil {
-		fmt.Println("unable to init connection with redis db :", err)
+		fmt.Printf("unable to start the server")
 		return
-	} else {
-		fmt.Println("Connected ", connection.GetDB().ClientID())
-	}
-
-	defer closeConnect(connection)
-}
-
-func closeConnect(connection *db.Database) {
-	err := connection.Close()
-	if err != nil {
-		fmt.Println("unable to close redis connection")
-		return
-	} else {
-		fmt.Println("Disconnected")
 	}
 }
