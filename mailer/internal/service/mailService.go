@@ -13,21 +13,21 @@ type Mail struct {
 }
 
 type MailServer struct {
-	address     string
-	fromAddress string
-	auth        smtp.Auth
+	Address     string
+	FromAddress string
+	Auth        smtp.Auth
 }
 
 func NewMailServer(identity, host, address, fromAddress, fromPassword string) *MailServer {
 	return &MailServer{
-		address:     address,
-		fromAddress: fromPassword,
-		auth:        smtp.PlainAuth(identity, fromAddress, fromPassword, host),
+		Address:     address,
+		FromAddress: fromPassword,
+		Auth:        smtp.PlainAuth(identity, fromAddress, fromPassword, host),
 	}
 }
 
 func (server *MailServer) SendMail(mail Mail) error {
-	return smtp.SendMail(server.address, server.auth, server.fromAddress, mail.To, server.buildMailBody(mail))
+	return smtp.SendMail(server.Address, server.Auth, server.FromAddress, mail.To, server.buildMailBody(mail))
 }
 
 func (server *MailServer) buildMailBody(mail Mail) []byte {
@@ -36,6 +36,6 @@ func (server *MailServer) buildMailBody(mail Mail) []byte {
 		"Subject: %s\r\n"+
 		"MIME-Version: 1.0\r\n"+
 		"Content-Type: text/html; charset=\"UTF-8\"\r\n\r\n"+
-		"%s", server.fromAddress, mail.To[0], mail.Subject, mail.Body)
+		"%s", server.FromAddress, mail.To[0], mail.Subject, mail.Body)
 	return []byte(body)
 }

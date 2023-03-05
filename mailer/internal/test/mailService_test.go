@@ -1,6 +1,7 @@
-package service
+package test
 
 import (
+	"github.com/dre-zouhair/mailer/internal/service"
 	"net/smtp"
 	"testing"
 )
@@ -12,7 +13,7 @@ func TestMailServer_SendMail(t *testing.T) {
 		auth        smtp.Auth
 	}
 	type args struct {
-		mail Mail
+		mail service.Mail
 	}
 	tests := []struct {
 		name    string
@@ -28,7 +29,7 @@ func TestMailServer_SendMail(t *testing.T) {
 				auth:        smtp.PlainAuth("", "sender@test.com", "password", "localhost"),
 			},
 			args: args{
-				Mail{
+				service.Mail{
 					To:      []string{"target@test.com"},
 					Subject: "Test case 1",
 					Body:    "<h1>HELLO</h1>",
@@ -39,10 +40,10 @@ func TestMailServer_SendMail(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := &MailServer{
-				address:     tt.fields.address,
-				fromAddress: tt.fields.fromAddress,
-				auth:        tt.fields.auth,
+			server := &service.MailServer{
+				Address:     tt.fields.address,
+				FromAddress: tt.fields.fromAddress,
+				Auth:        tt.fields.auth,
 			}
 			if err := server.SendMail(tt.args.mail); (err != nil) != tt.wantErr {
 				t.Errorf("SendMail() error = %v, wantErr %v", err, tt.wantErr)
