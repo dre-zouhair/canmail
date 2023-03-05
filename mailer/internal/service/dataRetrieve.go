@@ -6,7 +6,7 @@ import (
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
-func RetrieveBulkData(templateName string) (*model.Template, []model.Target) {
+func RetrieveRedisBulkData(templateName string) (*model.Template, []model.Target) {
 
 	connection, err := db.Connect()
 	if err != nil {
