@@ -2,30 +2,35 @@ package model
 
 import (
 	"fmt"
+	"github.com/go-redis/redis"
 	"strings"
 )
 
 type Template struct {
-	ID   string `json:"id"`
-	Body string `json:"body"`
+	ID      string `json:"id"`
+	Subject string `json:"subject"`
+	Body    string `json:"body"`
 }
 
-func (template *Template) Build(model map[string]string) {
+func (template *Template) Build(model map[string]string) (body string) {
+	body = template.Body
 	for key, value := range model {
 		if value == "" {
 			fmt.Println("no valid value for " + key + " in " + template.ID)
 		}
-		template.Body = strings.ReplaceAll(template.Body, key, value)
+		body = strings.ReplaceAll(body, key, value)
 	}
+	return body
 }
 
 type TemplateRepository struct {
 	*Repository[Template]
 }
 
-func NewTemplateRepository() *TemplateRepository {
+func NewTemplateRepository(conn *redis.Client) *TemplateRepository {
 	return &TemplateRepository{
 		Repository: &Repository[Template]{
+			conn:  conn,
 			name:  "templates",
 			entry: new(Template),
 		},

@@ -14,13 +14,14 @@ type IRepository[T any] interface {
 }
 
 type Repository[T any] struct {
+	conn    *redis.Client
 	name    string
 	entries []T
 	entry   *T
 }
 
-func (entity *Repository[T]) GetAll(conn *redis.Client) []T {
-	result, err := conn.LRange(entity.name, 0, -1).Result()
+func (entity *Repository[T]) GetAll() []T {
+	result, err := entity.conn.LRange(entity.name, 0, -1).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -36,9 +37,9 @@ func (entity *Repository[T]) GetAll(conn *redis.Client) []T {
 	return entity.entries
 }
 
-func (entity *Repository[T]) Get(conn *redis.Client, keyName string, keyValue any) *T {
+func (entity *Repository[T]) Get(keyName string, keyValue any) *T {
 	if len(entity.entries) == 0 {
-		_ = entity.GetAll(conn)
+		_ = entity.GetAll()
 	}
 
 	for _, entry := range entity.entries {
