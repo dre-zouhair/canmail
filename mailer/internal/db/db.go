@@ -11,7 +11,7 @@ type Database struct {
 }
 
 func Connect() (*Database, error) {
-	dbConf := config.NewDBConf()
+	dbConf := config.NewRedisConf()
 	if dbConf == nil {
 		return nil, errors.New("no DB conf was provided")
 	}

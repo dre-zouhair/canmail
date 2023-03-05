@@ -7,11 +7,11 @@ import (
 	"strconv"
 )
 
-type DBConf struct {
+type RedisConf struct {
 	redisOptions *redis.Options
 }
 
-func NewDBConf() *DBConf {
+func NewRedisConf() *RedisConf {
 	fmt.Println(os.Environ())
 	redisHost := os.Getenv("REDIS_HOST")
 	fmt.Println("REDIS_HOST ", redisHost)
@@ -39,7 +39,7 @@ func NewDBConf() *DBConf {
 		return nil
 	}
 
-	return &DBConf{
+	return &RedisConf{
 		redisOptions: &redis.Options{
 			Addr:     redisHost,
 			Password: redisPassword,
@@ -48,6 +48,6 @@ func NewDBConf() *DBConf {
 	}
 }
 
-func (dBConf *DBConf) GetRedisOptions() *redis.Options {
+func (dBConf *RedisConf) GetRedisOptions() *redis.Options {
 	return dBConf.redisOptions
 }
