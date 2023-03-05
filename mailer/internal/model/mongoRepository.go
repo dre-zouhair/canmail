@@ -12,6 +12,7 @@ import (
 type IMongoRepository[T any] interface {
 	Save(t T) string
 	FindOne(id string) *T
+	FindBy(attr, value string) *T
 	FinAll() []T
 	Paginate(page, limit int64) []T
 	Count() int64
@@ -84,6 +85,24 @@ func (repo *MongoRepository[T]) FindOne(id string) *T {
 		panic(err)
 	}
 	return &t
+}
+
+func (repo *MongoRepository[T]) FindBy(attr, value string) []T {
+	collection := repo.connection.Collection(repo.Name)
+	filter := bson.M{attr: value}
+
+	cursor, err := collection.Find(repo.context, filter)
+	if err != nil {
+		return nil
+	}
+
+	defer cursor.Close(repo.context)
+
+	var results []T
+	if err := cursor.All(repo.context, &results); err != nil {
+		return nil
+	}
+	return results
 }
 
 func (repo *MongoRepository[T]) UpdateByID(id string, t T) int64 {
