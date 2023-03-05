@@ -31,27 +31,34 @@ func RetrieveRedisBulkData(templateName string) (*model.Template, []model.Target
 }
 
 func RetrieveBulkData(templateName string) (*model.Template, []model.Target) {
+	return PaginateBulkData(templateName, 1, -1)
+}
 
+func PaginateBulkData(templateName string, page, limit int64) (*model.Template, []model.Target) {
 	client, dbName := db.GetMongoDBConnection(context.Background())
 	defer client.Disconnect(context.Background())
-
 	database := client.Database(dbName)
-
 	templateRepository := model.NewTemplateMongoRepository(database)
+	targetRepository := model.NewTargetMongoRepository(database)
+	if limit == -1 {
+		limit = targetRepository.Count()
+	}
+	return retrieveBulkData(templateName, templateRepository, targetRepository, page, limit)
+}
 
-	template := templateRepository.FindOne("")
+func retrieveBulkData(templateName string, templateRepository *model.TemplateMongoRepository, targetRepository *model.TargetMongoRepository, page, limit int64) (*model.Template, []model.Target) {
+	template := templateRepository.FindBy("name", templateName)
 	if template == nil {
 		fmt.Println("No template was found with the name " + templateName)
 		return nil, nil
 	}
-	targetRepository := model.NewTargetMongoRepository(database)
-	targets := targetRepository.FinAll()
+
+	targets := targetRepository.Paginate(page, limit)
 	if targets == nil || len(targets) == 0 {
 		fmt.Println("No targets associated with the template " + templateName + " were found")
 		return nil, nil
 	}
-	return template, targets
-
+	return &template[0], targets
 }
 
 func closeConnect(connection *db.Database) {
