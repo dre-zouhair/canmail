@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/dre-zouhair/mailer/internal/handler"
+	"net"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -20,9 +22,20 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 	})
 	http.HandleFunc("/bulk", handler.Bulk)
-	err := http.ListenAndServe(":8080", nil)
+
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", "localhost", "8080"))
 	if err != nil {
-		fmt.Printf("unable to start the server")
+		fmt.Printf("Error creating listener: %v\n", err)
 		return
+	}
+
+	server := http.Server{
+		Handler:      nil,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 0 * time.Second,
+	}
+
+	if err := server.Serve(listener); err != nil {
+		fmt.Printf("Error starting server: %v\n", err)
 	}
 }
