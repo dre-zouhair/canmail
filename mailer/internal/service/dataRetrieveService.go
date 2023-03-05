@@ -15,10 +15,16 @@ func RetrieveBulkData(templateName string) (*model.Template, []model.Target) {
 	defer closeConnect(connection)
 	templateRepository := model.NewTemplateRepository(connection.GetDB())
 	template := templateRepository.Get("id", templateName)
-
+	if template == nil {
+		fmt.Println("No template was found with the name " + templateName)
+		return nil, nil
+	}
 	targetRepository := model.NewTargetRepository(connection.GetDB())
 	targets := targetRepository.GetAll()
-
+	if targets == nil || len(targets) == 0 {
+		fmt.Println("No targets associated with the template " + templateName + " were found")
+		return nil, nil
+	}
 	return template, targets
 
 }
