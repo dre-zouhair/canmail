@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  mailer-smtp-container:
+    image: mailer-smtp-image
+    container_name: mailer-smtp-container
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      - MH_API_USERNAME=mailer
+      - MH_API_PASSWORD=password

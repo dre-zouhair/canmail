@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   mailer-container:
-    image: mailer
+    image: mailer-image
     container_name: mailer-container
     environment:
       - REDIS_HOST=redis-mailer:6379
