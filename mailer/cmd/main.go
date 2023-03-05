@@ -23,7 +23,7 @@ func main() {
 	})
 	http.HandleFunc("/bulk", handler.Bulk)
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", "localhost", "8080"))
+	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", "", "8080"))
 	if err != nil {
 		fmt.Printf("Error creating listener: %v\n", err)
 		return

@@ -1,4 +1,8 @@
-init: redis-build redis-run mongo-init smtp-build smtp-run mailer-build mailer-run
+init: init-dependency init-app
+
+init-dependency: redis-build redis-run smtp-build smtp-run
+
+init-app: mailer-build mailer-run
 
 redis-build:
 	docker build -t redis-mailer  -f ./docker/redis.dockerfile .
@@ -21,4 +25,4 @@ smtp-build:
 smtp-run:
 	docker-compose -f ./docker/mail-hog-compose.yml up -d
 
-.PHONY: init
+.PHONY: init-dependency init-app
