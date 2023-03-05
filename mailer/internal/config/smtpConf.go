@@ -21,11 +21,11 @@ type FromConf struct {
 	FromName     string
 }
 
-func (smtp *SMTPConf) hasFromCOnf() bool {
+func (smtp *SMTPConf) HasFromConf() bool {
 	return smtp.from != nil && smtp.from.FromAddress != "" && smtp.from.FromPassword != ""
 }
 
-func (smtp *SMTPConf) getFromCOnf() *FromConf {
+func (smtp *SMTPConf) GetFromConf() *FromConf {
 	return smtp.from
 }
 
