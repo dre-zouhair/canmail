@@ -2,33 +2,17 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dre-zouhair/mailer/internal/config"
-	"github.com/dre-zouhair/mailer/internal/db"
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
-func BulkMails(tempName string) []error {
-	connection, err := db.Connect()
-	if err != nil {
-		return []error{
-			errors.New("unable to init connection with redis db : " + err.Error()),
-		}
-	}
-
+func BulkMails(template *model.Template, targets []model.Target) []error {
 	mailServer, err := GetMailServer()
 	if err != nil {
 		return []error{
 			errors.New("unable to init mail server : " + err.Error()),
 		}
 	}
-
-	defer closeConnect(connection)
-	templateRepository := model.NewTemplateRepository(connection.GetDB())
-	template := templateRepository.Get(tempName, tempName)
-
-	targetRepository := model.NewTargetRepository(connection.GetDB())
-	targets := targetRepository.GetAll()
 	return bulkMail(targets, template, mailServer)
 }
 
@@ -61,14 +45,4 @@ func GetMailServer() (*MailServer, error) {
 
 	mailServer := NewMailServer("", mailConf.Host, mailConf.Domain, mailConf.GetFromConf().FromAddress, mailConf.GetFromConf().FromPassword)
 	return mailServer, nil
-}
-
-func closeConnect(connection *db.Database) {
-	err := connection.Close()
-	if err != nil {
-		fmt.Println("unable to close redis connection")
-		return
-	} else {
-		fmt.Println("Disconnected")
-	}
 }
