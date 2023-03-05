@@ -8,17 +8,19 @@ import (
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
-func BulkMails(tempName string) {
+func BulkMails(tempName string) []error {
 	connection, err := db.Connect()
 	if err != nil {
-		fmt.Println("unable to init connection with redis db :", err)
-		return
+		return []error{
+			errors.New("unable to init connection with redis db : " + err.Error()),
+		}
 	}
 
 	mailServer, err := GetMailServer()
 	if err != nil {
-		fmt.Println("unable to init mail server :", err)
-		return
+		return []error{
+			errors.New("unable to init mail server : " + err.Error()),
+		}
 	}
 
 	defer closeConnect(connection)
@@ -27,21 +29,27 @@ func BulkMails(tempName string) {
 
 	targetRepository := model.NewTargetRepository(connection.GetDB())
 	targets := targetRepository.GetAll()
+	return bulkMail(targets, template, mailServer)
+}
 
+func bulkMail(targets []model.Target, template *model.Template, mailServer *MailServer) []error {
+	mails := make([]Mail, 0)
 	for _, target := range targets {
 		templateBody := template.Build(target.Model)
-		err = mailServer.SendMail(Mail{
+		mails = append(mails, Mail{
 			To:      []string{target.Email},
 			Subject: template.Subject,
 			Body:    templateBody,
 		})
-
-		if err != nil {
-			fmt.Println("unable to init connection with redis db :", err)
-			return
-		}
 	}
 
+	errs := mailServer.SendMails(mails)
+
+	if len(errs) == 0 {
+		return nil
+	}
+
+	return errs
 }
 
 func GetMailServer() (*MailServer, error) {

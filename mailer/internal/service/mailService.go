@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"net/smtp"
 )
@@ -28,6 +29,16 @@ func NewMailServer(identity, host, address, fromAddress, fromPassword string) *M
 
 func (server *MailServer) SendMail(mail Mail) error {
 	return smtp.SendMail(server.Address, server.Auth, server.FromAddress, mail.To, server.buildMailBody(mail))
+}
+
+func (server *MailServer) SendMails(mails []Mail) (errs []error) {
+	for _, mail := range mails {
+		err := server.SendMail(mail)
+		if err != nil {
+			errs = append(errs, errors.New("unable to send mail to : -> "+mail.To[0]+err.Error()))
+		}
+	}
+	return errs
 }
 
 func (server *MailServer) buildMailBody(mail Mail) []byte {
