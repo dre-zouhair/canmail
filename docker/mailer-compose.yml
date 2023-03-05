@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  mailer-container:
+    image: mailer
+    container_name: mailer-container
+    environment:
+      - REDIS_HOST=redis-mailer:6379
+      - REDIS_PASSWORD=password
+      - REDIS_DB=0
+    restart: always
+    ports:
+      - "8080:80"
