@@ -12,7 +12,6 @@ type RedisConf struct {
 }
 
 func NewRedisConf() *RedisConf {
-	fmt.Println(os.Environ())
 	redisHost := os.Getenv("REDIS_HOST")
 	if redisHost == "" {
 		fmt.Println("redisHost is not set")
