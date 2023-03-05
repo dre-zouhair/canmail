@@ -3,13 +3,13 @@ package db
 import (
 	"context"
 	"fmt"
-	"github.com/dre-zouhair/mailer/conf"
+	"github.com/dre-zouhair/mailer/internal/config"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func GetMongoDBConnection() *mongo.Database {
 
-	clientOptions, dbName, err := conf.GetMongoURI()
+	clientOptions, dbName, err := config.GetMongoURI()
 
 	if err != nil {
 		fmt.Println("No client Options were provided for mongodb " + err.Error())

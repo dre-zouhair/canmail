@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type IRepository[T any] interface {
+type IMongoRepository[T any] interface {
 	Save(t T) string
 	FindOne(id string) *T
 	FinAll() []T
@@ -23,13 +23,13 @@ type Entity struct {
 	ID primitive.ObjectID `json:"_id"`
 }
 
-type Repository[T any] struct {
+type MongoRepository[T any] struct {
 	Name       string
 	connection *mongo.Database
 	context    context.Context
 }
 
-func (repo *Repository[T]) Save(t T) int64 {
+func (repo *MongoRepository[T]) Save(t T) int64 {
 	collection := repo.connection.Collection(repo.Name)
 	_, err := collection.InsertOne(repo.context, t)
 	if err != nil {
@@ -38,7 +38,7 @@ func (repo *Repository[T]) Save(t T) int64 {
 	return 1
 }
 
-func (repo *Repository[T]) Count() int64 {
+func (repo *MongoRepository[T]) Count() int64 {
 	collection := repo.connection.Collection(repo.Name)
 	count, err := collection.CountDocuments(repo.context, bson.M{}, nil)
 	if err != nil {
@@ -47,11 +47,11 @@ func (repo *Repository[T]) Count() int64 {
 	return count
 }
 
-func (repo *Repository[T]) FinAll() []T {
+func (repo *MongoRepository[T]) FinAll() []T {
 	return repo.Paginate(1, repo.Count())
 }
 
-func (repo *Repository[T]) Paginate(page, limit int64) []T {
+func (repo *MongoRepository[T]) Paginate(page, limit int64) []T {
 	collection := repo.connection.Collection(repo.Name)
 
 	findOptions := options.Find().SetSkip((page - 1) * limit).SetLimit(limit)
@@ -76,7 +76,7 @@ func (repo *Repository[T]) Paginate(page, limit int64) []T {
 	return ts
 }
 
-func (repo *Repository[T]) FindOne(id string) *T {
+func (repo *MongoRepository[T]) FindOne(id string) *T {
 	collection := repo.connection.Collection(repo.Name)
 	var t T
 	err := collection.FindOne(repo.context, bson.M{"_id": id}).Decode(&t)
@@ -86,7 +86,7 @@ func (repo *Repository[T]) FindOne(id string) *T {
 	return &t
 }
 
-func (repo *Repository[T]) UpdateByID(id string, t T) int64 {
+func (repo *MongoRepository[T]) UpdateByID(id string, t T) int64 {
 	collection := repo.connection.Collection(repo.Name)
 	updated, err := collection.UpdateByID(repo.context, bson.M{"_id": id}, t)
 	if err != nil {
@@ -95,7 +95,7 @@ func (repo *Repository[T]) UpdateByID(id string, t T) int64 {
 	return updated.ModifiedCount
 }
 
-func (repo *Repository[T]) DeleteOne(id string) int64 {
+func (repo *MongoRepository[T]) DeleteOne(id string) int64 {
 	collection := repo.connection.Collection(repo.Name)
 	updated, err := collection.DeleteOne(repo.context, bson.M{"_id": id})
 	if err != nil {

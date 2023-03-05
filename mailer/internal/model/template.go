@@ -1,13 +1,16 @@
 package model
 
 import (
+	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 )
 
 type Template struct {
-	ID      string `json:"id"`
+	Entity
+	Name    string `json:"name"`
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
 }
@@ -15,8 +18,8 @@ type Template struct {
 func (template *Template) Build(model map[string]string) (body string) {
 	body = template.Body
 	for key, value := range model {
-		if value == "" {
-			fmt.Println("no valid value for " + key + " in " + template.ID)
+		if len(value) == 0 {
+			fmt.Println("no valid value for " + key + " in " + template.ID.Hex())
 		}
 		body = strings.ReplaceAll(body, key, value)
 	}
@@ -33,6 +36,20 @@ func NewTemplateRepository(conn *redis.Client) *TemplateRepository {
 			conn:  conn,
 			name:  "templates",
 			entry: new(Template),
+		},
+	}
+}
+
+type TemplateMongoRepository struct {
+	*MongoRepository[Template]
+}
+
+func NewTemplateMongoRepository(connection *mongo.Database) *TemplateMongoRepository {
+	return &TemplateMongoRepository{
+		&MongoRepository[Template]{
+			"targets",
+			connection,
+			context.Background(),
 		},
 	}
 }
