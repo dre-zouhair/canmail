@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -18,10 +17,6 @@ type IMongoRepository[T any] interface {
 	Count() int64
 	UpdateByID(id string, t T) int64
 	DeleteOne(id string) int64
-}
-
-type Entity struct {
-	ID primitive.ObjectID `json:"_id"`
 }
 
 type MongoRepository[T any] struct {

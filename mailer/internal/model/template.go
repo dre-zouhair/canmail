@@ -4,15 +4,16 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-redis/redis"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 )
 
 type Template struct {
-	Entity
-	Name    string `json:"name"`
-	Subject string `json:"subject"`
-	Body    string `json:"body"`
+	ID      primitive.ObjectID `json:"_id"`
+	Name    string             `json:"name"`
+	Subject string             `json:"subject"`
+	Body    string             `json:"body"`
 }
 
 func (template *Template) Build(model map[string]string) (body string) {

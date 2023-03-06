@@ -1,6 +1,7 @@
 version: "3.9"
 services:
   mongodb-mailer-container:
+    network_mode: host
     container_name: mongodb-mailer-container
     image: mongodb-mailer-image
     environment:

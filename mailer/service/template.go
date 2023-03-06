@@ -1,21 +1,19 @@
 package service
 
 import (
+	"context"
 	"github.com/dre-zouhair/mailer/internal/db"
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
 type TemplateService struct {
-	repo *model.TemplateRepository
+	repo *model.TemplateMongoRepository
 }
 
 func NewTemplateService() *TemplateService {
-	connection, err := db.Connect()
-	if err != nil {
-		return nil
-	}
-	defer closeConnect(connection)
-	templateRepository := model.NewTemplateRepository(connection.GetDB())
+	connection, dbName := db.GetMongoDBConnection(context.Background())
+
+	templateRepository := model.NewTemplateMongoRepository(connection.Database(dbName))
 	return &TemplateService{
 		templateRepository,
 	}

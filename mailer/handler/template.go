@@ -7,6 +7,12 @@ import (
 	"net/http"
 )
 
+type template struct {
+	Name    string `json:"name"`
+	Subject string `json:"subject"`
+	Body    string `json:"body"`
+}
+
 func SaveTemplate(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
@@ -14,7 +20,7 @@ func SaveTemplate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var body model.Template
+	var body template
 	err := json.NewDecoder(r.Body).Decode(&body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -22,7 +28,12 @@ func SaveTemplate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	templateService := service.NewTemplateService()
-	res := templateService.AddTemplate(body)
+
+	res := templateService.AddTemplate(model.Template{
+		Name:    body.Name,
+		Body:    body.Body,
+		Subject: body.Subject,
+	})
 
 	if res != 0 {
 		w.Header().Set("Content-Type", "application/json")

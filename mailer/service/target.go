@@ -1,21 +1,19 @@
 package service
 
 import (
+	"context"
 	"github.com/dre-zouhair/mailer/internal/db"
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
 type TargetService struct {
-	repo *model.TargetRepository
+	repo *model.TargetMongoRepository
 }
 
 func NewTargetService() *TargetService {
-	connection, err := db.Connect()
-	if err != nil {
-		return nil
-	}
-	defer closeConnect(connection)
-	TargetRepository := model.NewTargetRepository(connection.GetDB())
+	connection, dbName := db.GetMongoDBConnection(context.Background())
+
+	TargetRepository := model.NewTargetMongoRepository(connection.Database(dbName))
 	return &TargetService{
 		TargetRepository,
 	}
