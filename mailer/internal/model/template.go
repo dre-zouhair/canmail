@@ -28,6 +28,7 @@ func (template *Template) Build(model map[string]string) (body string) {
 
 type TemplateRepository struct {
 	*Repository[Template]
+	*MongoRepository[Template]
 }
 
 func NewTemplateRepository(conn *redis.Client) *TemplateRepository {

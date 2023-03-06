@@ -14,6 +14,7 @@ type Target struct {
 
 type TargetRepository struct {
 	*Repository[Target]
+	*MongoRepository[Target]
 }
 
 func NewTargetRepository(conn *redis.Client) *TargetRepository {

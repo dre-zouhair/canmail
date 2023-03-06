@@ -30,13 +30,16 @@ type MongoRepository[T any] struct {
 	context    context.Context
 }
 
-func (repo *MongoRepository[T]) Save(t T) int64 {
+func (repo *MongoRepository[T]) Save(ts []T) int64 {
 	collection := repo.connection.Collection(repo.Name)
-	_, err := collection.InsertOne(repo.context, t)
-	if err != nil {
-		return 0
+	var count int64 = 0
+	for _, t := range ts {
+		_, err := collection.InsertOne(repo.context, t)
+		if err != nil {
+			count++
+		}
 	}
-	return 1
+	return count
 }
 
 func (repo *MongoRepository[T]) Count() int64 {
