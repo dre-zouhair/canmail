@@ -1,11 +1,11 @@
-version: '3.9'
+version: "3.9"
 services:
   mongodb-mailer-container:
     container_name: mongodb-mailer-container
-    image: mongo:4.2
+    image: mongodb-mailer-image
     environment:
-        - MONGO_INITDB_ROOT_USERNAME=admin
-        - MONGO_INITDB_ROOT_PASSWORD=pass
+        - MONGO_USERNAME=admin
+        - MONGO_PASSWORD=pass
     ports:
       - "27017:27017"
     volumes:
