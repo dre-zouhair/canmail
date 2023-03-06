@@ -1,5 +1,7 @@
+db = db.getSiblingDB("mailer");
 
-db.use("mailer")
+db.createCollection("targets");
+db.createCollection("templates");
 
 db.createUser({
     user: "mailer",
@@ -11,6 +13,3 @@ db.createUser({
         }
     ]
 });
-
-db.createCollection("targets");
-db.createCollection("templates");

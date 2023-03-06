@@ -5,7 +5,7 @@ services:
     image: mongodb-mailer-image
     environment:
         - MONGO_USERNAME=admin
-        - MONGO_PASSWORD=pass
+        - MONGO_PASSWORD=password
     ports:
       - "27017:27017"
     volumes:
