@@ -1,6 +1,7 @@
 init: init-dependency init-app
+init-redis: redis-build redis-run
 
-init-dependency: redis-build redis-run smtp-build smtp-run
+init-dependency: mongodb-build mongodb-run smtp-build smtp-run
 
 init-app: mailer-build mailer-run
 
@@ -10,8 +11,11 @@ redis-build:
 redis-run:
 	docker-compose -f ./docker/redis-compose.yml up -d
 
-mongo-init:
-	docker-compose -f ./docker/mongo-compose.yml up -d
+mongodb-build:
+	docker build -t mongodb-mailer-image -f ./docker/mongodb.dockerfile .
+
+mongodb-run:
+	docker-compose -f ./docker/mongodb-compose.yml up -d
 
 mailer-build:
 	docker build -t mailer-image -f ./docker/mailer.dockerfile .

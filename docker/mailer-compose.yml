@@ -14,6 +14,11 @@ services:
       - SMTP_FROM=from@mailer
       - SMTP_FROM_PASSWORD=password
       - SMTP_FROM_NAME=from
+      - MONGODB_HOST=mongodb-mailer-image
+      - MONGODB_USERNAME=mailer
+      - MONGODB_PASSWORD=password
+      - MONGODB_DB_NAME=mailer
+      - MONGODB_PORT=27017
     restart: always
     ports:
       - "8080:8080"
