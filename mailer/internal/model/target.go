@@ -3,14 +3,12 @@ package model
 import (
 	"context"
 	"github.com/go-redis/redis"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Target struct {
-	ID    primitive.ObjectID `json:"_id"`
-	Email string             `json:"email"`
-	Model map[string]string  `json:"model"`
+	Email string            `json:"email"`
+	Model map[string]string `json:"model"`
 }
 
 type TargetRepository struct {

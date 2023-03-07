@@ -28,11 +28,11 @@ func (service *TargetService) SaveTargets(t []model.Target) int64 {
 }
 
 func (service *TargetService) UpdateTarget(t model.Target) int64 {
-	return service.repo.UpdateByID(t.ID.Hex(), t)
+	return service.repo.UpdateByID(t.Email, t)
 }
 
 func (service *TargetService) RemoveTarget(t model.Target) int64 {
-	return service.repo.DeleteOne(t.ID.Hex())
+	return service.repo.DeleteOne(t.Email)
 }
 
 func (service *TargetService) Get(id string) *model.Target {

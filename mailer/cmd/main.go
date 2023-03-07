@@ -24,6 +24,7 @@ func main() {
 
 	http.HandleFunc("/bulk", handler.Bulk)
 	http.HandleFunc("/template/save", handler.SaveTemplate)
+	http.HandleFunc("/template", handler.GetTemplates)
 	http.HandleFunc("/target/save", handler.SaveTarget)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", "", "8080"))

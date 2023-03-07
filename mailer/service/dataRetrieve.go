@@ -15,7 +15,7 @@ func RetrieveRedisBulkData(templateName string) (*model.Template, []model.Target
 	}
 	defer closeConnect(connection)
 	templateRepository := model.NewTemplateRepository(connection.GetDB())
-	template := templateRepository.Get("id", templateName)
+	template := templateRepository.Get("name", templateName)
 	if template == nil {
 		fmt.Println("No template was found with the name " + templateName)
 		return nil, nil

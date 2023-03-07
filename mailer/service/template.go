@@ -24,11 +24,11 @@ func (service *TemplateService) AddTemplate(t model.Template) int64 {
 }
 
 func (service *TemplateService) UpdateTemplate(t model.Template) int64 {
-	return service.repo.UpdateByID(t.ID.Hex(), t)
+	return service.repo.UpdateByID(t.Name, t)
 }
 
 func (service *TemplateService) RemoveTemplate(t model.Template) int64 {
-	return service.repo.DeleteOne(t.ID.Hex())
+	return service.repo.DeleteOne(t.Name)
 }
 
 func (service *TemplateService) Get(id string) *model.Template {
@@ -37,4 +37,8 @@ func (service *TemplateService) Get(id string) *model.Template {
 
 func (service *TemplateService) Retrieve(page, limit int64) []model.Template {
 	return service.repo.Paginate(page, limit)
+}
+
+func (service *TemplateService) GetAll() []model.Template {
+	return service.repo.FinAll()
 }
