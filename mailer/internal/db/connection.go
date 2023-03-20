@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetMongoDBConnection(context context.Context) (*mongo.Client, string) {
+func GetDBConnection(context context.Context) (*mongo.Client, string) {
 
 	clientOptions, dbName, err := config.GetMongoURI()
 

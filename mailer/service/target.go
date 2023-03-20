@@ -7,11 +7,11 @@ import (
 )
 
 type TargetService struct {
-	repo *model.TargetMongoRepository
+	repo *model.TargetRepository
 }
 
 func NewTargetService() *TargetService {
-	connection, dbName := db.GetMongoDBConnection(context.Background())
+	connection, dbName := db.GetDBConnection(context.Background())
 
 	TargetRepository := model.NewTargetMongoRepository(connection.Database(dbName))
 	return &TargetService{

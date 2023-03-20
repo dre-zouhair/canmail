@@ -1,15 +1,8 @@
 init: init-dependency init-app
-init-redis: redis-build redis-run
 
 init-dependency: mongodb-build mongodb-run smtp-build smtp-run
 
 init-app: mailer-build mailer-run
-
-redis-build:
-	docker build -t redis-mailer  -f ./docker/redis.dockerfile .
-
-redis-run:
-	docker-compose -f ./docker/redis-compose.yml up -d
 
 mongodb-build:
 	docker build -t mongodb-mailer-image -f ./docker/mongodb.dockerfile .

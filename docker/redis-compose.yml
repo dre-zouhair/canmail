@@ -1,8 +1,0 @@
-version: "3.9"
-services:
-  redis-mailer-container:
-    image: redis-mailer
-    container_name: redis-mailer-container
-    restart: always
-    ports:
-      - "6379:6379"

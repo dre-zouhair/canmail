@@ -7,11 +7,11 @@ import (
 )
 
 type TemplateService struct {
-	repo *model.TemplateMongoRepository
+	repo *model.TemplateRepository
 }
 
 func NewTemplateService() *TemplateService {
-	connection, dbName := db.GetMongoDBConnection(context.Background())
+	connection, dbName := db.GetDBConnection(context.Background())
 
 	templateRepository := model.NewTemplateMongoRepository(connection.Database(dbName))
 	return &TemplateService{

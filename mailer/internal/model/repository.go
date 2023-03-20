@@ -1,59 +1,122 @@
 package model
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"github.com/go-redis/redis"
-	"reflect"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type IRepository[T any] interface {
-	GetAll(conn *redis.Client) []T
-	Get(conn *redis.Client, key string) *T
-	Unmarshal([]byte) error
+	Save(t T) string
+	FindOne(id string) *T
+	FindBy(attr, value string) *T
+	FinAll() []T
+	Paginate(page, limit int64) []T
+	Count() int64
+	UpdateByID(id string, t T) int64
+	DeleteOne(id string) int64
 }
 
 type Repository[T any] struct {
-	conn    *redis.Client
-	name    string
-	entries []T
-	entry   *T
+	Name       string
+	connection *mongo.Database
+	context    context.Context
 }
 
-func (entity *Repository[T]) GetAll() []T {
-	result, err := entity.conn.LRange(entity.name, 0, -1).Result()
+func (repo *Repository[T]) Save(ts []T) int64 {
+	collection := repo.connection.Collection(repo.Name)
+	var count int64 = 0
+	for _, t := range ts {
+		_, err := collection.InsertOne(repo.context, t)
+		if err != nil {
+			count++
+		}
+	}
+	return count
+}
+
+func (repo *Repository[T]) Count() int64 {
+	collection := repo.connection.Collection(repo.Name)
+	count, err := collection.CountDocuments(repo.context, bson.M{}, nil)
+	if err != nil {
+		return -1
+	}
+	return count
+}
+
+func (repo *Repository[T]) FinAll() []T {
+	return repo.Paginate(1, repo.Count())
+}
+
+func (repo *Repository[T]) Paginate(page, limit int64) []T {
+	collection := repo.connection.Collection(repo.Name)
+
+	findOptions := options.Find().SetSkip((page - 1) * limit).SetLimit(limit)
+	filter := bson.M{}
+
+	cursor, err := collection.Find(repo.context, filter, findOptions)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+
+	defer cursor.Close(repo.context)
+
+	var ts []T
+
+	for cursor.Next(repo.context) {
+		var t T
+		_ = cursor.Decode(&t)
+		ts = append(ts, t)
+	}
+
+	return ts
+}
+
+func (repo *Repository[T]) FindOne(id string) *T {
+	collection := repo.connection.Collection(repo.Name)
+	var t T
+	err := collection.FindOne(repo.context, bson.M{"_id": id}).Decode(&t)
 	if err != nil {
 		panic(err)
 	}
-	entity.entries = make([]T, 0)
-	for _, jsonStr := range result {
-		err := entity.Unmarshal([]byte(jsonStr))
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		entity.entries = append(entity.entries, *entity.entry)
-	}
-	return entity.entries
+	return &t
 }
 
-func (entity *Repository[T]) Get(keyName string, keyValue any) *T {
-	if len(entity.entries) == 0 {
-		_ = entity.GetAll()
+func (repo *Repository[T]) FindBy(attr, value string) []T {
+	collection := repo.connection.Collection(repo.Name)
+	filter := bson.M{attr: value}
+
+	cursor, err := collection.Find(repo.context, filter)
+	if err != nil {
+		return nil
 	}
 
-	for _, entry := range entity.entries {
-		entryReflect := reflect.ValueOf(&entry)
-		field := reflect.Indirect(entryReflect).FieldByName(keyName)
-		valueReflect := reflect.ValueOf(keyValue)
-		if field.String() == valueReflect.String() {
-			return &entry
-		}
-	}
+	defer cursor.Close(repo.context)
 
-	return nil
+	var results []T
+	if err2 := cursor.All(repo.context, &results); err2 != nil {
+		return nil
+	}
+	return results
 }
 
-func (entity *Repository[T]) Unmarshal(bytes []byte) error {
-	return json.Unmarshal(bytes, entity.entry)
+func (repo *Repository[T]) UpdateByID(id string, t T) int64 {
+	collection := repo.connection.Collection(repo.Name)
+	updated, err := collection.UpdateByID(repo.context, bson.M{"_id": id}, t)
+	if err != nil {
+		return 0
+	}
+	return updated.ModifiedCount
+}
+
+func (repo *Repository[T]) DeleteOne(id string) int64 {
+	collection := repo.connection.Collection(repo.Name)
+	updated, err := collection.DeleteOne(repo.context, bson.M{"_id": id})
+	if err != nil {
+		return 0
+	}
+	return updated.DeletedCount
 }

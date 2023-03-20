@@ -4,9 +4,6 @@ services:
     image: mailer-image
     container_name: mailer-container
     environment:
-      - REDIS_HOST=redis-mailer:6379
-      - REDIS_PASSWORD=password
-      - REDIS_DB=0
       - SMTP_DOMAIN=localhost:1025
       - SMTP_HOST=localhost
       - SMTP_USERNAME=smtp

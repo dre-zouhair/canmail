@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strings"
 )
@@ -12,6 +11,10 @@ type Template struct {
 	Name    string `json:"name"`
 	Subject string `json:"subject"`
 	Body    string `json:"body"`
+}
+
+type TemplateRepository struct {
+	*Repository[Template]
 }
 
 func (template *Template) Build(model map[string]string) (body string) {
@@ -25,28 +28,9 @@ func (template *Template) Build(model map[string]string) (body string) {
 	return body
 }
 
-type TemplateRepository struct {
-	*Repository[Template]
-	*MongoRepository[Template]
-}
-
-func NewTemplateRepository(conn *redis.Client) *TemplateRepository {
+func NewTemplateMongoRepository(connection *mongo.Database) *TemplateRepository {
 	return &TemplateRepository{
-		Repository: &Repository[Template]{
-			conn:  conn,
-			name:  "templates",
-			entry: new(Template),
-		},
-	}
-}
-
-type TemplateMongoRepository struct {
-	*MongoRepository[Template]
-}
-
-func NewTemplateMongoRepository(connection *mongo.Database) *TemplateMongoRepository {
-	return &TemplateMongoRepository{
-		&MongoRepository[Template]{
+		&Repository[Template]{
 			"templates",
 			connection,
 			context.Background(),
