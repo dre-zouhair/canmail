@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"github.com/go-redis/redis"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -13,26 +12,11 @@ type Target struct {
 
 type TargetRepository struct {
 	*Repository[Target]
-	*MongoRepository[Target]
 }
 
-func NewTargetRepository(conn *redis.Client) *TargetRepository {
+func NewTargetMongoRepository(connection *mongo.Database) *TargetRepository {
 	return &TargetRepository{
-		Repository: &Repository[Target]{
-			conn:  conn,
-			name:  "targets",
-			entry: new(Target),
-		},
-	}
-}
-
-type TargetMongoRepository struct {
-	*MongoRepository[Target]
-}
-
-func NewTargetMongoRepository(connection *mongo.Database) *TargetMongoRepository {
-	return &TargetMongoRepository{
-		&MongoRepository[Target]{
+		&Repository[Target]{
 			"targets",
 			connection,
 			context.Background(),

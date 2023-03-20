@@ -26,7 +26,7 @@ func Bulk(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	template, targets := service2.RetrieveRedisBulkData(body.TemplateName)
+	template, targets := service2.RetrieveBulkData(body.TemplateName)
 	if template == nil || targets == nil {
 		fmt.Println(errors.New("Unable to retrieve " + body.TemplateName + " data"))
 		http.Error(w, "Unable to bulk mail for "+body.TemplateName, http.StatusInternalServerError)

@@ -7,35 +7,12 @@ import (
 	"github.com/dre-zouhair/mailer/internal/model"
 )
 
-func RetrieveRedisBulkData(templateName string) (*model.Template, []model.Target) {
-
-	connection, err := db.Connect()
-	if err != nil {
-		return nil, nil
-	}
-	defer closeConnect(connection)
-	templateRepository := model.NewTemplateRepository(connection.GetDB())
-	template := templateRepository.Get("name", templateName)
-	if template == nil {
-		fmt.Println("No template was found with the name " + templateName)
-		return nil, nil
-	}
-	targetRepository := model.NewTargetRepository(connection.GetDB())
-	targets := targetRepository.GetAll()
-	if targets == nil || len(targets) == 0 {
-		fmt.Println("No targets associated with the template " + templateName + " were found")
-		return nil, nil
-	}
-	return template, targets
-
-}
-
 func RetrieveBulkData(templateName string) (*model.Template, []model.Target) {
 	return PaginateBulkData(templateName, 1, -1)
 }
 
 func PaginateBulkData(templateName string, page, limit int64) (*model.Template, []model.Target) {
-	client, dbName := db.GetMongoDBConnection(context.Background())
+	client, dbName := db.GetDBConnection(context.Background())
 	defer client.Disconnect(context.Background())
 	database := client.Database(dbName)
 	templateRepository := model.NewTemplateMongoRepository(database)
@@ -46,7 +23,7 @@ func PaginateBulkData(templateName string, page, limit int64) (*model.Template, 
 	return retrieveBulkData(templateName, templateRepository, targetRepository, page, limit)
 }
 
-func retrieveBulkData(templateName string, templateRepository *model.TemplateMongoRepository, targetRepository *model.TargetMongoRepository, page, limit int64) (*model.Template, []model.Target) {
+func retrieveBulkData(templateName string, templateRepository *model.TemplateRepository, targetRepository *model.TargetRepository, page, limit int64) (*model.Template, []model.Target) {
 	template := templateRepository.FindBy("name", templateName)
 	if template == nil {
 		fmt.Println("No template was found with the name " + templateName)
@@ -59,14 +36,4 @@ func retrieveBulkData(templateName string, templateRepository *model.TemplateMon
 		return nil, nil
 	}
 	return &template[0], targets
-}
-
-func closeConnect(connection *db.Database) {
-	err := connection.Close()
-	if err != nil {
-		fmt.Println("unable to close redis connection")
-		return
-	} else {
-		fmt.Println("Disconnected")
-	}
 }

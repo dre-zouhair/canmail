@@ -3,7 +3,6 @@ module github.com/dre-zouhair/mailer
 go 1.19
 
 require (
-	github.com/go-redis/redis v6.15.9+incompatible
 	go.mongodb.org/mongo-driver v1.11.2
 )
 
