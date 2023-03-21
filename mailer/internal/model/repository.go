@@ -9,9 +9,9 @@ import (
 )
 
 type IRepository[T any] interface {
-	Save(t T) string
+	Save(t T) int64
 	FindOne(id string) *T
-	FindBy(attr, value string) *T
+	FindBy(attr, value string) []T
 	FinAll() []T
 	Paginate(page, limit int64) []T
 	Count() int64
