@@ -19,7 +19,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func WsHandler(w http.ResponseWriter, r *http.Request) {
-	// Upgrade HTTP connection to WebSocket connection
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -27,7 +27,6 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	// Read the first message from the client (which should be an integer n)
 	_, p, err := conn.ReadMessage()
 	if err != nil {
 		fmt.Println(err)
