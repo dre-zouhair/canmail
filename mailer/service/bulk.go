@@ -54,7 +54,7 @@ func (server *MailServer) ConcurrentBulk(targets []model.Target, template *model
 	}
 
 	i := 0
-	for ; i < len(targets); i = i + 50 {
+	for ; i < len(targets)-50; i = i + 50 {
 		go server.chunk(targets[i:i+50], template, success, fails)
 	}
 

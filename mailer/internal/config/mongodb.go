@@ -20,7 +20,7 @@ func GetMongoURI() (*options.ClientOptions, string, error) {
 		return nil, "", errors.New("no MongoDB Configuration was provided")
 	}
 
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d/?authSource=admin", username, password, host, port)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%d/", username, password, host, port)
 
 	return options.Client().ApplyURI(uri), dbName, nil
 }
