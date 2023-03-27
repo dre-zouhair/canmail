@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	Up()
+	defer Down()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
