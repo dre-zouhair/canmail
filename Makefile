@@ -22,4 +22,4 @@ smtp-build:
 smtp-run:
 	docker-compose -f ./docker/mail-hog-compose.yml up -d
 
-.PHONY: init init-dependency init-app
+.PHONY: init init-dependency init-app smtp-build smtp-run

@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	Up()
+	defer Down()
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != "GET" {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -26,6 +29,7 @@ func main() {
 	http.HandleFunc("/template/save", handler.SaveTemplate)
 	http.HandleFunc("/template", handler.GetTemplates)
 	http.HandleFunc("/target/save", handler.SaveTarget)
+	http.HandleFunc("/ws", handler.WsHandler)
 
 	listener, err := net.Listen("tcp", fmt.Sprintf("%s:%s", "", "8080"))
 	if err != nil {
