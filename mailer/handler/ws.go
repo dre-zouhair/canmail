@@ -64,19 +64,13 @@ func WsHandler(w http.ResponseWriter, r *http.Request) {
 	for {
 		select {
 		case target := <-success:
-			err := conn.WriteMessage(websocket.TextMessage, []byte("{"+
-				"status: 200,"+
-				"Email:'"+target.Email+"'"+
-				"}"))
+			err := conn.WriteMessage(websocket.TextMessage, []byte("{\"status\": 200,\"email\":\""+target.Email+"\"}"))
 			if err != nil {
 				fmt.Println(err)
 				return
 			}
 		case target := <-fails:
-			err := conn.WriteMessage(websocket.TextMessage, []byte("{"+
-				"status: 500,"+
-				"Email:'"+target.Email+"'"+
-				"}"))
+			err := conn.WriteMessage(websocket.TextMessage, []byte("{\"status\": 500,\"email\":\""+target.Email+"\"}"))
 			if err != nil {
 				fmt.Println(err)
 			}
