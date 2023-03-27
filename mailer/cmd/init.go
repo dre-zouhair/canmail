@@ -12,8 +12,8 @@ func Up() {
 	os.Setenv("SMTP_FROM_NAME", "from")
 
 	os.Setenv("MONGODB_HOST", "localhost")
-	os.Setenv("MONGODB_USERNAME", "mailer")
-	os.Setenv("MONGODB_PASSWORD", "password")
+	// os.Setenv("MONGODB_USERNAME", "mailer")
+	// os.Setenv("MONGODB_PASSWORD", "password")
 	os.Setenv("MONGODB_DB_NAME", "mailer")
 	os.Setenv("MONGODB_PORT", "27017")
 }
